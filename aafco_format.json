@@ -1,0 +1,83 @@
+{
+    "meta": {
+        "description": "AAFCO nutrient standards and ingredient composition data format",
+        "version": "1.0",
+        "basis": "AAFCO Dog Food Nutrient Profiles for Adult Maintenance (per 1000 kcal ME)"
+    },
+    "nutrient_definitions": {
+        "protein": {
+            "name": "タンパク質",
+            "kana": "たんぱくしつ",
+            "unit": "g",
+            "aafco_min": 45.0,
+            "aafco_max": null
+        },
+        "fat": {
+            "name": "脂質",
+            "kana": "ししつ",
+            "unit": "g",
+            "aafco_min": 13.8,
+            "aafco_max": null
+        },
+        "calcium": {
+            "name": "カルシウム",
+            "kana": "かるしうむ",
+            "unit": "g",
+            "aafco_min": 1.25,
+            "aafco_max": 6.25
+        },
+        "phosphorus": {
+            "name": "リン",
+            "kana": "りん",
+            "unit": "g",
+            "aafco_min": 1.00,
+            "aafco_max": 4.00
+        },
+        "ca_p_ratio": {
+            "name": "カルシウム：リン比",
+            "kana": "かるしうむりんひ",
+            "unit": "ratio",
+            "aafco_min": 1.0,
+            "aafco_max": 2.0,
+            "computed": true
+        },
+        "vitamin_a": {
+            "name": "ビタミンA",
+            "kana": "びたみんえー",
+            "unit": "IU",
+            "aafco_min": 1250,
+            "aafco_max": 62500
+        }
+    },
+    "ingredients": [
+        {
+            "id": "chicken_breast_skinless",
+            "name": "鶏むね肉（皮なし）",
+            "kana": [
+                "とりむねにく（かわなし）",
+                "チキンブレスト"
+            ],
+            "calories": 108,
+            "nutrients": {
+                "protein": 22.3,
+                "fat": 1.5,
+                "calcium": 0.004,
+                "phosphorus": 0.2,
+                "vitamin_a": 14
+            }
+        },
+        {
+            "id": "sweet_potato_steamed",
+            "name": "さつまいも（蒸し）",
+            "kana": "さつまいも（むし）",
+            "calories": 134,
+            "nutrients": {
+                "protein": 1.2,
+                "fat": 0.2,
+                "calcium": 0.024,
+                "phosphorus": 0.046,
+                "vitamin_a": 0
+            }
+        }
+    ]
+}

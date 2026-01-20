@@ -1,0 +1,215 @@
+{
+    "meta": {
+        "source": "AAFCO Dog Food Nutrient Profiles for Adult Maintenance",
+        "unit_basis": "per 1000 kcal ME"
+    },
+    "sections": [
+        {
+            "id": "macronutrients",
+            "name": "主要栄養素",
+            "nutrients": [
+                {
+                    "id": "protein",
+                    "name": "粗タンパク質",
+                    "unit": "g",
+                    "min": 18.0,
+                    "max": null
+                },
+                {
+                    "id": "fat",
+                    "name": "粗脂肪",
+                    "unit": "g",
+                    "min": 5.5,
+                    "max": null
+                },
+                {
+                    "id": "carbohydrate",
+                    "name": "炭水化物",
+                    "unit": "g",
+                    "min": null,
+                    "max": null
+                },
+                {
+                    "id": "fiber",
+                    "name": "食物繊維",
+                    "unit": "g",
+                    "min": null,
+                    "max": null
+                },
+                {
+                    "id": "dha_epa",
+                    "name": "DHA EPA",
+                    "unit": "mg",
+                    "min": 50,
+                    "max": null
+                },
+                {
+                    "id": "moisture",
+                    "name": "水分",
+                    "unit": "g",
+                    "min": null,
+                    "max": null
+                }
+            ]
+        },
+        {
+            "id": "minerals",
+            "name": "ミネラル類",
+            "nutrients": [
+                {
+                    "id": "calcium",
+                    "name": "カルシウム",
+                    "unit": "g",
+                    "min": 0.5,
+                    "max": 0.8
+                },
+                {
+                    "id": "phosphorus",
+                    "name": "リン",
+                    "unit": "g",
+                    "min": 0.4,
+                    "max": 1.6
+                },
+                {
+                    "id": "potassium",
+                    "name": "カリウム",
+                    "unit": "g",
+                    "min": 0.6,
+                    "max": null
+                },
+                {
+                    "id": "sodium",
+                    "name": "ナトリウム",
+                    "unit": "g",
+                    "min": 0.08,
+                    "max": null
+                },
+                {
+                    "id": "magnesium",
+                    "name": "マグネシウム",
+                    "unit": "g",
+                    "min": 0.06,
+                    "max": null
+                },
+                {
+                    "id": "iron",
+                    "name": "鉄",
+                    "unit": "mg",
+                    "min": 4.0,
+                    "max": null
+                },
+                {
+                    "id": "copper",
+                    "name": "銅",
+                    "unit": "mg",
+                    "min": 0.73,
+                    "max": null
+                },
+                {
+                    "id": "manganese",
+                    "name": "マンガン",
+                    "unit": "mg",
+                    "min": 0.5,
+                    "max": null
+                },
+                {
+                    "id": "zinc",
+                    "name": "亜鉛",
+                    "unit": "mg",
+                    "min": 8.0,
+                    "max": null
+                },
+                {
+                    "id": "iodine",
+                    "name": "ヨウ素",
+                    "unit": "μg",
+                    "min": 100,
+                    "max": 1100
+                },
+                {
+                    "id": "selenium",
+                    "name": "セレン",
+                    "unit": "μg",
+                    "min": 0.35,
+                    "max": 2
+                }
+            ]
+        },
+        {
+            "id": "vitamins",
+            "name": "ビタミン類",
+            "nutrients": [
+                {
+                    "id": "vitamin_a",
+                    "name": "ビタミンA",
+                    "unit": "IU",
+                    "min": 500,
+                    "max": 25000
+                },
+                {
+                    "id": "vitamin_d",
+                    "name": "ビタミンD",
+                    "unit": "IU",
+                    "min": 50,
+                    "max": 300
+                },
+                {
+                    "id": "vitamin_e",
+                    "name": "ビタミンE",
+                    "unit": "IU",
+                    "min": 5,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b1",
+                    "name": "ビタミンB₁",
+                    "unit": "mg",
+                    "min": 0.225,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b2",
+                    "name": "ビタミンB₂",
+                    "unit": "mg",
+                    "min": 0.52,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b5",
+                    "name": "ビタミンB₅",
+                    "unit": "mg",
+                    "min": 1.2,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b3",
+                    "name": "ビタミンB₃",
+                    "unit": "mg",
+                    "min": 1.36,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b6",
+                    "name": "ビタミンB₆",
+                    "unit": "mg",
+                    "min": 0.15,
+                    "max": null
+                },
+                {
+                    "id": "folic_acid",
+                    "name": "葉酸",
+                    "unit": "mg",
+                    "min": 0.0216,
+                    "max": null
+                },
+                {
+                    "id": "vitamin_b12",
+                    "name": "ビタミンB₁₂",
+                    "unit": "mg",
+                    "min": 0.0028,
+                    "max": null
+                }
+            ]
+        }
+    ]
+}
