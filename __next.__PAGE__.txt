@@ -1,0 +1,9 @@
+1:"$Sreact.fragment"
+2:I[47257,["/dognutritional-balance/_next/static/chunks/e7283fea06b4a340.js"],"ClientPageRoot"]
+3:I[52683,["/dognutritional-balance/_next/static/chunks/824e2c8f5766914a.js","/dognutritional-balance/_next/static/chunks/41bb4c7d74dba359.js"],"default"]
+6:I[97367,["/dognutritional-balance/_next/static/chunks/e7283fea06b4a340.js"],"OutletBoundary"]
+7:"$Sreact.suspense"
+0:{"buildId":"TrGCm4EZHWoxfanX_4RoI","rsc":["$","$1","c",{"children":[["$","$L2",null,{"Component":"$3","serverProvidedParams":{"searchParams":{},"params":{},"promises":["$@4","$@5"]}}],[["$","script","script-0",{"src":"/dognutritional-balance/_next/static/chunks/824e2c8f5766914a.js","async":true}],["$","script","script-1",{"src":"/dognutritional-balance/_next/static/chunks/41bb4c7d74dba359.js","async":true}]],["$","$L6",null,{"children":["$","$7",null,{"name":"Next.MetadataOutlet","children":"$@8"}]}]]}],"loading":null,"isPartial":false}
+4:{}
+5:"$0:rsc:props:children:0:props:serverProvidedParams:params"
+8:null
