@@ -21,22 +21,12 @@ export const calculateDER = (profile: DogProfile): number => {
     const rer = calculateRER(profile.weight);
     let factor = 1.0;
 
-    if (profile.age <= 7) {
-        // 7歳以下
-        switch (profile.activity) {
-            case 'low': factor = 1.0; break;
-            case 'normal': factor = 1.3; break;
-            case 'high': factor = 1.6; break;
-            default: factor = 1.0;
-        }
-    } else {
-        // 8歳以上
-        switch (profile.activity) {
-            case 'low': factor = 1.0; break;
-            case 'normal': factor = 1.1; break;
-            case 'high': factor = 1.3; break;
-            default: factor = 1.0;
-        }
+    // 年齢に関わらず統一の活動量係数を使用
+    switch (profile.activity) {
+        case 'low': factor = 1.0; break;
+        case 'normal': factor = 1.3; break;
+        case 'high': factor = 1.6; break;
+        default: factor = 1.0;
     }
 
     return Math.round(rer * factor);
@@ -103,4 +93,30 @@ export const calculateDrawValue = (
 
     // クリッピング (上限ありの場合は2.5まで、なしは上で2.0に制限済みだが念のため)
     return Math.min(val, 2.5);
+};
+
+/**
+ * 選択された食材リストから総栄養価を計算
+ */
+export const calculateTotalNutrition = (foods: any[]): Record<string, number> => {
+    return foods.reduce(
+        (acc, food) => {
+            const ratio = food.amount / 100;
+
+            // Update calories & weight
+            acc.calories = (acc.calories || 0) + food.calories * ratio;
+            acc.weight = (acc.weight || 0) + food.amount;
+
+            // Update all nutrients present in the food data
+            if (food.nutrients) {
+                Object.entries(food.nutrients).forEach(([key, value]) => {
+                    const val = value as number;
+                    acc[key] = (acc[key] || 0) + val * ratio;
+                });
+            }
+
+            return acc;
+        },
+        { calories: 0, weight: 0 } as Record<string, number>
+    );
 };

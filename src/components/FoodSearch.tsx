@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import Fuse from 'fuse.js';
+
 import { Ingredient, SelectedFood } from '@/types';
 import ingredientsData from '@/data/ingredients.json';
 import { Input } from '@/components/ui/input';
@@ -14,31 +14,44 @@ interface FoodSearchProps {
 export const FoodSearch: React.FC<FoodSearchProps> = ({ onAdd }) => {
     const [query, setQuery] = useState('');
     const [results, setResults] = useState<Ingredient[]>([]);
-    const [fuse, setFuse] = useState<Fuse<Ingredient> | null>(null);
+    // Search effect (Simple includes match)
     const [isFocused, setIsFocused] = useState(false);
     const containerRef = useRef<HTMLDivElement>(null);
     const inputRef = useRef<HTMLInputElement>(null);
 
-    // Initialize Fuse
     useEffect(() => {
-        // ingredientsData is any because it's imported from json, assume Type cast
-        const data = ingredientsData as unknown as Ingredient[];
-        const fuseInstance = new Fuse(data, {
-            keys: ['name', 'kana'],
-            threshold: 0.4, // Adjust for fuzziness
-        });
-        setFuse(fuseInstance);
-    }, []);
-
-    // Search effect
-    useEffect(() => {
-        if (!fuse || !query) {
+        if (!query) {
             setResults([]);
             return;
         }
-        const searchRes = fuse.search(query);
-        setResults(searchRes.map(r => r.item).slice(0, 10)); // Top 10 results
-    }, [query, fuse]);
+
+        const lowerQuery = query.toLowerCase();
+        // ingredientsData is any because it's imported from json, assume Type cast
+        const data = ingredientsData as unknown as Ingredient[];
+
+        const filtered = data.filter(item => {
+            const nameMatch = item.name.toLowerCase().includes(lowerQuery);
+            const kanaMatch = Array.isArray(item.kana)
+                ? item.kana.some((k: string) => k.includes(lowerQuery))
+                : false;
+            return nameMatch || kanaMatch;
+        });
+
+        // Sort: 3-tier priority
+        // 0: kana[0] (primary reading) starts with query → highest priority
+        // 1: name or kana[1+] starts with query → medium priority
+        // 2: partial match only → lowest priority
+        const getPriority = (item: Ingredient): number => {
+            if (Array.isArray(item.kana) && item.kana[0]?.startsWith(lowerQuery)) return 0;
+            if (item.name.toLowerCase().startsWith(lowerQuery)) return 1;
+            if (Array.isArray(item.kana) && item.kana.slice(1).some((k: string) => k.startsWith(lowerQuery))) return 1;
+            return 2;
+        };
+
+        const sorted = filtered.sort((a, b) => getPriority(a) - getPriority(b));
+
+        setResults(sorted.slice(0, 10)); // Top 10 results
+    }, [query]);
 
     // Click outside to close results
     useEffect(() => {
@@ -55,7 +68,7 @@ export const FoodSearch: React.FC<FoodSearchProps> = ({ onAdd }) => {
     }, []);
 
     const handleAdd = (ingredient: Ingredient) => {
-        onAdd({ ...ingredient, amount: 100 }); // Default 100g
+        onAdd({ ...ingredient, amount: 10 }); // Default 10g
         setQuery('');
         setResults([]);
         setIsFocused(false);
@@ -68,9 +81,9 @@ export const FoodSearch: React.FC<FoodSearchProps> = ({ onAdd }) => {
 
     const handleFocus = () => {
         setIsFocused(true);
-        // Scroll input to top of viewport after short delay for keyboard
+        // Scroll input to near top of viewport (block: 'start') with offset via scroll-margin
         setTimeout(() => {
-            inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            inputRef.current?.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }, 300);
     };
 
@@ -81,11 +94,11 @@ export const FoodSearch: React.FC<FoodSearchProps> = ({ onAdd }) => {
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-slate-400" />
                 <Input
                     ref={inputRef}
-                    placeholder="食材を追加 (例: とりささみ)"
+                    placeholder="食材を追加していけます (例: とりささみ)"
                     value={query}
                     onChange={(e) => setQuery(e.target.value)}
                     onFocus={handleFocus}
-                    className="pl-9 pr-9 text-base bg-white"
+                    className="pl-9 pr-9 text-sm bg-white scroll-mt-24"
                 />
                 {query && (
                     <button

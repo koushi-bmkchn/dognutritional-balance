@@ -1,0 +1,36 @@
+[
+    {
+        "id": "supple-001",
+        "name": "わんこのひとさじ",
+        "calories": 229.5,
+        "nutrients": {
+            "protein": 9.8,
+            "fat": 7,
+            "carbohydrate": 29.4,
+            "fiber": 2.5,
+            "dha_epa": 1740,
+            "moisture": 4,
+            "calcium": 13.748,
+            "phosphorus": 1,
+            "potassium": 0,
+            "sodium": 0,
+            "magnesium": 0,
+            "iron": 220,
+            "copper": 18,
+            "manganese": 8,
+            "zinc": 200,
+            "iodine": 3250,
+            "selenium": 603,
+            "vitamin_a": 12321.00,
+            "vitamin_d": 1728.00,
+            "vitamin_e": 569.18,
+            "vitamin_b1": 62.2,
+            "vitamin_b2": 80,
+            "vitamin_b5": 72.5,
+            "vitamin_b3": 81.6,
+            "vitamin_b6": 65,
+            "folic_acid": 2.7,
+            "vitamin_b12": 0.4
+        }
+    }
+]

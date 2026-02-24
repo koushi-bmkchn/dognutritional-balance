@@ -7,6 +7,8 @@ export interface LogData {
     age: number | string;
     weight: number | string;
     activity: string;
+    feedingType: string;
+    dryFoodAmount: number;
     foods: Array<{
         name: string;
         amount: number;
@@ -17,17 +19,26 @@ export interface LogData {
  * Send calculation data to Google Sheets via Google Apps Script
  * This function fails silently to avoid disrupting user experience
  */
-export async function logCalculation(profile: DogProfile, foods: SelectedFood[]): Promise<void> {
+export async function logCalculation(
+    profile: DogProfile,
+    foods: SelectedFood[],
+    feedingType: string,
+    dryFoodAmount: number
+): Promise<void> {
     try {
         const data: LogData = {
             name: profile.name,
             age: profile.age,
             weight: profile.weight,
             activity: profile.activity,
-            foods: foods.map(f => ({
-                name: f.name,
-                amount: f.amount
-            }))
+            feedingType,
+            dryFoodAmount,
+            foods: foods
+                .filter(f => f.id !== 'dry-food-001')
+                .map(f => ({
+                    name: f.name,
+                    amount: f.amount
+                }))
         };
 
         // Send data asynchronously without blocking UI

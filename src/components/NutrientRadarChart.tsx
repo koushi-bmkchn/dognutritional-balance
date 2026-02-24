@@ -10,7 +10,8 @@ import {
 
 interface NutrientData {
     subject: string;
-    A: number; // drawValue
+    A: number; // drawValue (Total)
+    baseA?: number; // baseDrawValue (Food only)
     fullMark: number; // 2.0 (MAX)
 }
 
@@ -18,34 +19,43 @@ interface NutrientRadarChartProps {
     data: {
         name: string;
         drawValue: number;
+        baseDrawValue?: number; // Add baseDrawValue
         adjustedMin: number;
         adjustedMax: number | null;
     }[];
 }
 
 export const NutrientRadarChart: React.FC<NutrientRadarChartProps> = ({ data }) => {
-    // フォーマット変換
+    // チャート表示用スケール変換（不足域を広く、適正域を圧縮）
+    // 0-1.0 → 0-1.5 (×1.5)、1.0-2.0 → 1.5-2.0 (×0.5)、2.0-2.5 → 2.0-2.5 (×1.0)
+    const chartScale = (v: number): number => {
+        if (v <= 1.0) return v * 1.5;
+        if (v <= 2.0) return 1.5 + (v - 1.0) * 0.5;
+        return 2.0 + (v - 2.0);
+    };
+
+    // フォーマット変換（スケール変換適用）
     const chartData: NutrientData[] = data.map((item) => ({
         subject: item.name,
-        A: Math.min(item.drawValue, 2.5), // 2.5でクリップ
+        A: chartScale(Math.min(item.drawValue, 2.5)),
+        baseA: item.baseDrawValue !== undefined ? chartScale(Math.min(item.baseDrawValue, 2.5)) : undefined,
         fullMark: 2.0,
     }));
 
-    // Create background data for zones
+    // Create background data for zones（スケール変換適用）
     // 1. Red Zone (2.0 - 2.5) -> Base Layer
-    // 2. Green Zone (1.0 - 2.0) -> Middle Layer
-    // 3. White Zone (0 - 1.0) -> Top Mask Layer
+    // 2. Green Zone (1.5 - 2.0) -> Middle Layer (変換後: 1.0→1.5)
+    // 3. White Zone (0 - 1.5) -> Top Mask Layer
 
     const enhancedChartData = chartData.map(d => ({
         ...d,
-        warningMark: 2.5,
-        fullMark: 2.0,
-        minMark: 1.0,
-        grid05: 0.5,
-        grid15: 1.5,
-        // grid10 and grid20 are covered by background boundaries, but we can add them if we want explicit lines
-        grid10: 1.0,
-        grid20: 2.0,
+        warningMark: chartScale(2.5),  // 2.5
+        fullMark: chartScale(2.0),     // 2.0
+        minMark: chartScale(1.0),      // 1.5
+        grid1: 0.5,
+        grid2: 1.0,
+        grid3: 1.5,
+        grid4: 2.0,
     }));
 
     const gridColor = "#d5d1cd"; // natural-stone
@@ -57,6 +67,9 @@ export const NutrientRadarChart: React.FC<NutrientRadarChartProps> = ({ data }) 
                     <PolarAngleAxis
                         dataKey="subject"
                         tick={{ fill: '#4a5a63', fontSize: 11, fontWeight: 600 }}
+                        radius="70%"
+                        tickSize={0}
+                        tickLine={false}
                     />
 
                     {/* Background Radar 1: 2.5 (Red Warning Zone) */}
@@ -91,12 +104,11 @@ export const NutrientRadarChart: React.FC<NutrientRadarChartProps> = ({ data }) 
                     />
 
                     {/* Manual Grid Lines (Overlays) */}
-                    <Radar dataKey="grid05" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
-                    <Radar dataKey="grid10" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
-                    <Radar dataKey="grid15" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
-                    <Radar dataKey="grid20" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
+                    <Radar dataKey="grid1" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
+                    <Radar dataKey="grid2" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
+                    <Radar dataKey="grid3" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
+                    <Radar dataKey="grid4" stroke={gridColor} strokeWidth={1} fill="none" isAnimationActive={false} />
 
-                    {/* PolarGrid removed as it is hidden by backgrounds */}
                     {/* PolarRadiusAxis for ticks only */}
                     <PolarRadiusAxis
                         angle={30}
@@ -106,16 +118,33 @@ export const NutrientRadarChart: React.FC<NutrientRadarChartProps> = ({ data }) 
                         ticks={[0.5, 1.0, 1.5, 2.0, 2.5] as any}
                     />
 
-                    {/* Actual Data Radar */}
+                    {/* Actual Data Radar Layer 1: Total (Food + Supplement) - Orange (Background) */}
                     <Radar
-                        name="Balance"
+                        name="Total Balance"
                         dataKey="A"
-                        stroke="#68804f"
-                        strokeWidth={3}
-                        fill="#68804f"
-                        fillOpacity={0.5}
+                        stroke="#c8763d"
+                        strokeWidth={2}
+                        fill="#c8763d"
+                        fillOpacity={0.3} // Increased transparency
                         isAnimationActive={true}
+                        animationBegin={0}
+                        animationDuration={1000}
                     />
+
+                    {/* Actual Data Radar Layer 2: Base (Food Only) - Green (Foreground) */}
+                    {enhancedChartData.some(d => d.baseA !== undefined) && (
+                        <Radar
+                            name="Base Balance"
+                            dataKey="baseA"
+                            stroke="#68804f"
+                            strokeWidth={2}
+                            fill="#68804f"
+                            fillOpacity={0.6} // Reduced transparency (Higher opacity)
+                            isAnimationActive={true}
+                            animationBegin={0}
+                            animationDuration={1000}
+                        />
+                    )}
                 </RadarChart>
             </ResponsiveContainer>
         </div>

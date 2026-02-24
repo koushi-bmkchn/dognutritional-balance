@@ -61,7 +61,7 @@
                     "name": "カルシウム",
                     "unit": "g",
                     "min": 0.5,
-                    "max": 0.8
+                    "max": 1.8
                 },
                 {
                     "id": "phosphorus",
@@ -130,8 +130,8 @@
                     "id": "selenium",
                     "name": "セレン",
                     "unit": "μg",
-                    "min": 0.35,
-                    "max": 2
+                    "min": 35,
+                    "max": 200
                 }
             ]
         },

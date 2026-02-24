@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
     output: 'export',
-    basePath: '/inumeshi', // デプロイ用とローカルで統一
+    basePath: process.env.NODE_ENV === 'production' ? '/inumeshi' : '',
     images: {
         unoptimized: true,
     },

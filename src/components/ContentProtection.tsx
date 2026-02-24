@@ -22,7 +22,7 @@ export const ContentProtection: React.FC<{ children: React.ReactNode }> = ({ chi
     }, []);
 
     return (
-        <div className="min-h-screen overflow-y-auto overscroll-none">
+        <div className="min-h-screen overflow-x-hidden">
             {children}
         </div>
     );

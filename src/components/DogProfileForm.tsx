@@ -13,6 +13,13 @@ import {
 } from "@/components/ui/select";
 import { cn } from '@/lib/utils';
 import { Dog, Minus, Plus } from 'lucide-react';
+import { SectionTitle } from '@/components/SectionTitle';
+
+const toHalfWidth = (str: string) => {
+    return str.replace(/[０-９]/g, (s) => {
+        return String.fromCharCode(s.charCodeAt(0) - 0xFEE0);
+    });
+};
 
 interface DogProfileFormProps {
     profile: DogProfile;
@@ -20,7 +27,7 @@ interface DogProfileFormProps {
 }
 
 export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChange }) => {
-    const [activeStep, setActiveStep] = useState(0); // 0:Name, 1:Age, 2:Weight, 3:Activity
+    const [activeStep, setActiveStep] = useState(-1); // -1:None selected, 0:Name, 1:Age, 2:Weight, 3:Activity
 
     const handleChange = (field: keyof DogProfile, value: any) => {
         onChange({ ...profile, [field]: value });
@@ -82,8 +89,8 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
     // Logic to determine if a step is accessible (unlocked)
     const isStepUnlocked = (index: number): boolean => {
         if (index === 0) return true; // Name always unlocked
-        if (index === 1) return profile.name.trim().length > 0; // Age unlocked if Name exists
-        if (index === 2) return isStepUnlocked(1) && profile.age !== ''; // Weight unlocked if Age valid (allow 0)
+        if (index === 1) return true; // Age always unlocked (name is optional)
+        if (index === 2) return profile.age !== ''; // Weight unlocked if Age valid (allow 0)
         if (index === 3) return isStepUnlocked(2) && profile.weight !== ''; // Activity unlocked if Weight > 0
         return false;
     };
@@ -164,14 +171,18 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
         );
     };
 
+
+
+
+
+
+
+
     return (
         <Card className="w-full bg-[#fcf2ea] border-none shadow-none">
-            <CardHeader className="pb-3 bg-[#fcf2ea] rounded-t-lg border-b border-[#d5d1cd]/50">
-                <CardTitle className="text-xl text-[#3f3f3f]">
-                    愛犬データ
-                </CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4 pt-4">
+            <SectionTitle title="うちの子プロフィール" english="STEP 1" />
+            <div className="border-b border-[#d5d1cd]/50 mb-4" />
+            <CardContent className="space-y-4 pt-0">
 
                 {/* Step 1: Name */}
                 <div
@@ -181,7 +192,9 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                     )}
                     onClick={() => handleStepClick(0)}
                 >
-                    <Label className={cn("text-sm mb-1 block", getLabelStyle(0))}>① お名前</Label>
+                    <Label className={cn("text-sm mb-1 block", getLabelStyle(0))}>
+                        お名前
+                    </Label>
                     <Input
                         value={profile.name}
                         onChange={(e) => handleChange('name', e.target.value)}
@@ -192,8 +205,6 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                         )}
                         onFocus={() => setActiveStep(0)}
                         onKeyDown={(e) => handleKeyDown(e, 0)}
-                        autoFocus={activeStep === 0}
-                        ref={(input) => { if (input && activeStep === 0) input.focus() }}
                     />
                     {/* Arrow */}
                     <div className={getArrowStyle(0)} />
@@ -207,7 +218,9 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                     )}
                     onClick={() => handleStepClick(1)}
                 >
-                    <Label className={cn("text-sm mb-1 block", getLabelStyle(1))}>② 年齢 (歳)</Label>
+                    <Label className={cn("text-sm mb-1 block", getLabelStyle(1))}>
+                        年齢 (歳)
+                    </Label>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
@@ -220,20 +233,21 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                         </Button>
                         <div className="flex-1">
                             <Input
-                                type="number"
-                                min={0}
+                                type="text"
+                                inputMode="numeric"
+                                pattern="\d*"
                                 placeholder="-"
                                 value={profile.age === '' ? '' : String(profile.age)}
-                                onChange={(e) => handleChange('age', e.target.value === '' ? '' : Number(e.target.value))}
+                                onChange={(e) => {
+                                    const val = toHalfWidth(e.target.value).replace(/[^0-9]/g, '');
+                                    handleChange('age', val === '' ? '' : Number(val));
+                                }}
                                 className={cn(
                                     "text-center text-lg font-bold focus-visible:ring-natural-salmon focus-visible:border-natural-salmon",
                                     activeStep !== 1 && "bg-transparent border-none p-0 h-auto text-[#3f3f3f]"
                                 )}
                                 onFocus={() => setActiveStep(1)}
-                                onKeyDown={(e) => {
-                                    preventNonNumericInput(e, false); // No decimals for age
-                                    handleKeyDown(e, 1);
-                                }}
+                                onKeyDown={(e) => handleKeyDown(e, 1)}
                                 ref={(input) => { if (input && activeStep === 1) input.focus() }}
                             />
                         </div>
@@ -259,7 +273,9 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                     )}
                     onClick={() => handleStepClick(2)}
                 >
-                    <Label className={cn("text-sm mb-1 block", getLabelStyle(2))}>③ 体重 (kg)</Label>
+                    <Label className={cn("text-sm mb-1 block", getLabelStyle(2))}>
+                        体重 (kg)
+                    </Label>
                     <div className="flex items-center gap-2">
                         <Button
                             variant="outline"
@@ -272,20 +288,32 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                         </Button>
                         <div className="flex-1">
                             <Input
-                                type="number"
-                                step="0.1"
+                                type="text"
+                                inputMode="decimal"
                                 placeholder="-"
                                 value={profile.weight === '' ? '' : String(profile.weight)}
-                                onChange={(e) => handleChange('weight', e.target.value === '' ? '' : Number(e.target.value))}
+                                onChange={(e) => {
+                                    // Convert full-width to half-width, then allow only digits and one dot
+                                    let val = toHalfWidth(e.target.value).replace(/[^0-9.]/g, '');
+
+                                    // Prevent multiple dots
+                                    const dots = val.split('.').length - 1;
+                                    if (dots > 1) return;
+
+                                    handleChange('weight', val === '' ? '' : val); // Temporarily keep string to allow typing "."
+                                }}
+                                onBlur={() => {
+                                    // Finalize as number on blur
+                                    if (profile.weight !== '') {
+                                        handleChange('weight', Number(profile.weight));
+                                    }
+                                }}
                                 className={cn(
                                     "text-center text-lg font-bold focus-visible:ring-natural-salmon focus-visible:border-natural-salmon",
                                     activeStep !== 2 && "bg-transparent border-none p-0 h-auto text-[#3f3f3f]"
                                 )}
                                 onFocus={() => setActiveStep(2)}
-                                onKeyDown={(e) => {
-                                    preventNonNumericInput(e, true); // Allow decimals for weight
-                                    handleKeyDown(e, 2);
-                                }}
+                                onKeyDown={(e) => handleKeyDown(e, 2)}
                                 ref={(input) => { if (input && activeStep === 2) input.focus() }}
                             />
                         </div>
@@ -311,7 +339,9 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                     )}
                     onClick={() => handleStepClick(3)}
                 >
-                    <Label className={cn("text-sm mb-1 block", getLabelStyle(3))}>④ 活動量</Label>
+                    <Label className={cn("text-sm mb-1 block", getLabelStyle(3))}>
+                        活動量
+                    </Label>
                     {activeStep === 3 ? (
                         <Select
                             value={profile.activity === '' ? undefined : profile.activity}

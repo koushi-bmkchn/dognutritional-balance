@@ -1,7 +1,20 @@
 @import "tailwindcss";
 
+@layer base {
+  html {
+    background-color: #fcf2ea;
+    /* Match app background */
+  }
+
+  body {
+    background-color: #fcf2ea;
+    /* Match app background */
+  }
+}
+
 /* Content Protection Styles */
 @layer utilities {
+
   /* Prevent pull-to-refresh */
   .overscroll-none {
     overscroll-behavior-y: none;
