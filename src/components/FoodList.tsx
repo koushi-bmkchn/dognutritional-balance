@@ -46,9 +46,9 @@ export const FoodList: React.FC<FoodListProps> = ({ foods, onUpdate }) => {
                             placeholder="0"
                             onChange={(e) => handleAmountChange(index, e.target.value)}
                             onFocus={(e) => e.target.select()}
-                            className="w-20 text-right h-8"
+                            className="w-20 text-right h-10 text-base"
                         />
-                        <span className="text-xs text-slate-500 w-4">g</span>
+                        <span className="text-sm text-slate-500 w-4">g</span>
                         <Button
                             variant="ghost"
                             size="icon"

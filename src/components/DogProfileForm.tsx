@@ -40,6 +40,35 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
         handleChange('weight', newWeight);
     };
 
+    const preventNonNumericInput = (e: React.KeyboardEvent, allowDecimal: boolean) => {
+        // Allowed keys: Backspace, Delete, Tab, Escape, Enter, Arrows, Home, End
+        const allowedKeys = [
+            'Backspace', 'Delete', 'Tab', 'Escape', 'Enter',
+            'ArrowLeft', 'ArrowRight', 'ArrowUp', 'ArrowDown', 'Home', 'End'
+        ];
+
+        if (allowedKeys.includes(e.key)) {
+            return;
+        }
+
+        // Allow numbers
+        if (/^[0-9]$/.test(e.key)) {
+            return;
+        }
+
+        // Allow decimal point if permitted and not already present
+        if (allowDecimal && e.key === '.') {
+            // Get current value from target
+            const target = e.target as HTMLInputElement;
+            if (!target.value.includes('.')) {
+                return;
+            }
+        }
+
+        // Block everything else
+        e.preventDefault();
+    };
+
     const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
         if (e.key === 'Enter') {
             e.preventDefault();
@@ -105,6 +134,36 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
         return "text-[#3f3f3f]";
     };
 
+    const getArrowStyle = (index: number) => {
+        // No arrow for the last step
+        if (index >= 3) return "hidden";
+
+        const isActive = activeStep === index;
+        const isCompleted = isStepCompleted(index);
+        const unlocked = isStepUnlocked(index);
+
+        let borderColor = "border-[#d5d1cd]";
+        let bgColor = "bg-white";
+
+        if (isActive) {
+            borderColor = isCompleted ? "border-[#7a8082]" : "border-[#d5d1cd]";
+        } else if (isCompleted) {
+            borderColor = "border-[#7a8082]";
+        } else if (unlocked) {
+            borderColor = "border-[#d5d1cd]";
+        } else {
+            // Inactive
+            borderColor = "border-[#d5d1cd]";
+            bgColor = "bg-[#d5d1cd]";
+        }
+
+        return cn(
+            "absolute -bottom-[9px] left-1/2 -translate-x-1/2 w-4 h-4 rotate-45 border-b-2 border-r-2 z-10",
+            borderColor,
+            bgColor
+        );
+    };
+
     return (
         <Card className="w-full bg-[#fcf2ea] border-none shadow-none">
             <CardHeader className="pb-3 bg-[#fcf2ea] rounded-t-lg border-b border-[#d5d1cd]/50">
@@ -117,7 +176,7 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                 {/* Step 1: Name */}
                 <div
                     className={cn(
-                        "transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
+                        "relative transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
                         getStepStyle(0)
                     )}
                     onClick={() => handleStepClick(0)}
@@ -126,9 +185,9 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                     <Input
                         value={profile.name}
                         onChange={(e) => handleChange('name', e.target.value)}
-                        placeholder="ポチ"
+                        placeholder="例 ポチ"
                         className={cn(
-                            "text-base text-center font-bold text-[#3f3f3f] focus-visible:ring-natural-salmon focus-visible:border-natural-salmon",
+                            "text-base text-center font-bold text-[#3f3f3f] focus-visible:ring-natural-salmon focus-visible:border-natural-salmon placeholder:text-[#9a9a9f] placeholder:font-normal",
                             activeStep !== 0 && "bg-transparent border-none p-0 h-auto text-[#3f3f3f]"
                         )}
                         onFocus={() => setActiveStep(0)}
@@ -136,12 +195,14 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                         autoFocus={activeStep === 0}
                         ref={(input) => { if (input && activeStep === 0) input.focus() }}
                     />
+                    {/* Arrow */}
+                    <div className={getArrowStyle(0)} />
                 </div>
 
                 {/* Step 2: Age (Counter UI) */}
                 <div
                     className={cn(
-                        "transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
+                        "relative transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
                         getStepStyle(1)
                     )}
                     onClick={() => handleStepClick(1)}
@@ -169,7 +230,10 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                                     activeStep !== 1 && "bg-transparent border-none p-0 h-auto text-[#3f3f3f]"
                                 )}
                                 onFocus={() => setActiveStep(1)}
-                                onKeyDown={(e) => handleKeyDown(e, 1)}
+                                onKeyDown={(e) => {
+                                    preventNonNumericInput(e, false); // No decimals for age
+                                    handleKeyDown(e, 1);
+                                }}
                                 ref={(input) => { if (input && activeStep === 1) input.focus() }}
                             />
                         </div>
@@ -183,12 +247,14 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                             <Plus className="h-4 w-4" />
                         </Button>
                     </div>
+                    {/* Arrow */}
+                    <div className={getArrowStyle(1)} />
                 </div>
 
                 {/* Step 3: Weight (Counter UI) */}
                 <div
                     className={cn(
-                        "transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
+                        "relative transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
                         getStepStyle(2)
                     )}
                     onClick={() => handleStepClick(2)}
@@ -216,7 +282,10 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                                     activeStep !== 2 && "bg-transparent border-none p-0 h-auto text-[#3f3f3f]"
                                 )}
                                 onFocus={() => setActiveStep(2)}
-                                onKeyDown={(e) => handleKeyDown(e, 2)}
+                                onKeyDown={(e) => {
+                                    preventNonNumericInput(e, true); // Allow decimals for weight
+                                    handleKeyDown(e, 2);
+                                }}
                                 ref={(input) => { if (input && activeStep === 2) input.focus() }}
                             />
                         </div>
@@ -230,12 +299,14 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                             <Plus className="h-4 w-4" />
                         </Button>
                     </div>
+                    {/* Arrow */}
+                    <div className={getArrowStyle(2)} />
                 </div>
 
                 {/* Step 4: Activity (Select) */}
                 <div
                     className={cn(
-                        "transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
+                        "relative transition-all duration-300 border-2 rounded-lg p-3 cursor-pointer",
                         getStepStyle(3)
                     )}
                     onClick={() => handleStepClick(3)}
@@ -250,21 +321,21 @@ export const DogProfileForm: React.FC<DogProfileFormProps> = ({ profile, onChang
                             }}
                             onOpenChange={() => setActiveStep(3)}
                         >
-                            <SelectTrigger className="w-full text-lg flex justify-between items-center">
+                            <SelectTrigger className="w-full text-sm font-bold text-[#3f3f3f] flex justify-between items-center">
                                 <SelectValue placeholder="-" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="low">少ない (シニア・運動不足)</SelectItem>
-                                <SelectItem value="normal">普通 (散歩1日1時間以内)</SelectItem>
-                                <SelectItem value="high">多い (散歩1日1時間以上)</SelectItem>
+                                <SelectItem value="low"><span className="text-xs">少ない（お散歩なし・室内遊びが中心）</span></SelectItem>
+                                <SelectItem value="normal"><span className="text-xs">普通（1日30分前後のお散歩あり）</span></SelectItem>
+                                <SelectItem value="high"><span className="text-xs">多い（1日1時間以上のお散歩あり）</span></SelectItem>
                             </SelectContent>
                         </Select>
                     ) : (
-                        <div className="text-base font-bold text-[#3f3f3f] pl-1 h-10 flex items-center justify-between">
-                            <span>
+                        <div className="text-sm font-bold text-[#3f3f3f] pl-1 h-10 flex items-center justify-between">
+                            <span className="whitespace-nowrap overflow-hidden text-ellipsis">
                                 {profile.activity === '' ? '-' :
-                                    profile.activity === 'low' ? '少ない (シニア・運動不足)' :
-                                        profile.activity === 'normal' ? '普通 (散歩1日1時間以内)' : '多い (散歩1日1時間以上)'}
+                                    profile.activity === 'low' ? '少ない（お散歩なし・室内遊びが中心）' :
+                                        profile.activity === 'normal' ? '普通（1日30分前後のお散歩あり）' : '多い（1日1時間以上のお散歩あり）'}
                             </span>
                         </div>
                     )}

@@ -9,6 +9,7 @@ import { DiagnosticResult } from '@/components/DiagnosticResult';
 import { RecommendedIngredients } from '@/components/RecommendedIngredients';
 import { Button } from '@/components/ui/button';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { logCalculation } from '@/utils/logging';
 
 export default function Home() {
     // Global State
@@ -37,15 +38,24 @@ export default function Home() {
         setSelectedFoods([...selectedFoods, food]);
     };
 
+    const handleCalculate = () => {
+        // Send data to spreadsheet (silent, non-blocking)
+        logCalculation(profile, selectedFoods);
+
+        // Update UI state
+        setIsCalculated(true);
+    };
+
     return (
         <main className="min-h-screen bg-[#fcf2ea] font-sans">
             <div className="max-w-md mx-auto bg-[#fcf2ea] min-h-screen pb-40">
                 {/* Header - Full Width */}
                 <div className="w-full">
                     <img
-                        src="/dognutritional-balance/images/header.png"
+                        src="/inumeshi/images/header.png"
                         alt="Header"
-                        className="w-full h-auto object-cover"
+                        className="w-full h-auto no-drag"
+                        draggable="false"
                     />
                 </div>
 
@@ -53,8 +63,12 @@ export default function Home() {
                 <div className="px-4 pt-6 space-y-6">
                     {/* Header Text */}
                     <div className="text-center space-y-2">
-                        <h1 className="text-2xl font-bold text-natural-black hidden">愛犬栄養計算</h1>
-                        <p className="text-lg font-bold text-[#3f3f3f]">手作りごはんの栄養バランスをチェック</p>
+                        <h1 className="text-lg font-bold text-[#e08863] leading-snug">
+                            実は不足しがちな栄養を、<br />簡単チェック。
+                        </h1>
+                        <p className="text-sm font-medium text-[#3f3f3f] leading-relaxed text-left inline-block max-w-[95%]">
+                            食材を入力するだけで、愛犬に「必要な栄養バランス」を手軽に診断できます。
+                        </p>
                     </div>
 
                     {/* 1. Profile Section */}
@@ -89,7 +103,7 @@ export default function Home() {
                         <div className="pt-2 pb-4 animate-in fade-in slide-in-from-bottom-4 duration-500">
                             <Button
                                 className="w-full bg-[#c8763d] hover:bg-[#e08863] text-[#ffffff] font-bold h-14 rounded-xl shadow-lg text-lg transition-all transform hover:scale-[1.02] active:scale-95"
-                                onClick={() => setIsCalculated(true)}
+                                onClick={handleCalculate}
                             >
                                 計算する
                             </Button>
@@ -116,9 +130,10 @@ export default function Home() {
                         <a href="#" className="block transition-transform hover:opacity-95">
                             <div className="w-full aspect-[3/1] bg-slate-200 relative">
                                 <img
-                                    src="/dognutritional-balance/images/banner.png"
+                                    src="/inumeshi/images/banner.png"
                                     alt="Special Offer"
-                                    className="w-full h-full object-cover"
+                                    className="w-full h-full object-cover no-drag"
+                                    draggable="false"
                                 />
                                 <div className="absolute inset-0 flex items-center justify-center bg-black/10 hover:bg-black/0 transition-colors">
                                     <span className="sr-only">詳細はこちら</span>

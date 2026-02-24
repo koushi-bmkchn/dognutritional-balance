@@ -1,1 +1,25 @@
 @import "tailwindcss";
+
+/* Content Protection Styles */
+@layer utilities {
+  /* Prevent pull-to-refresh */
+  .overscroll-none {
+    overscroll-behavior-y: none;
+  }
+
+  /* Disable text selection */
+  .no-select {
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+  }
+
+  /* Prevent image drag */
+  .no-drag {
+    -webkit-user-drag: none;
+    -khtml-user-drag: none;
+    -moz-user-drag: none;
+    -o-user-drag: none;
+  }
+}

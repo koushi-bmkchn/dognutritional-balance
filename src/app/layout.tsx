@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import { cn } from "@/lib/utils";
 import "./globals.css";
+import { ContentProtection } from "@/components/ContentProtection";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -17,7 +18,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="ja">
-            <body className={cn(inter.className, "min-h-screen overflow-y-auto")}>{children}</body>
+            <body className={cn(inter.className, "min-h-screen")}>
+                <ContentProtection>{children}</ContentProtection>
+            </body>
         </html>
     );
 }
